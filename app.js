@@ -255,7 +255,9 @@ function formatDate(dateString) {
 
   try {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
+    // Use browser's language for localization
+    const locale = navigator.language || 'en-US';
+    return date.toLocaleDateString(locale, {
       weekday: 'long',
       day: 'numeric',
       month: 'long',
@@ -271,13 +273,15 @@ function formatTime(startDate, endDate) {
 
   try {
     const start = new Date(startDate);
+    // Use browser's language for localization
+    const locale = navigator.language || 'en-US';
     const timeOptions = { hour: '2-digit', minute: '2-digit' };
 
-    let timeStr = start.toLocaleTimeString('en-US', timeOptions);
+    let timeStr = start.toLocaleTimeString(locale, timeOptions);
 
     if (endDate) {
       const end = new Date(endDate);
-      timeStr += ' - ' + end.toLocaleTimeString('en-US', timeOptions);
+      timeStr += ' - ' + end.toLocaleTimeString(locale, timeOptions);
     }
 
     return timeStr;
