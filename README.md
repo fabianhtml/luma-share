@@ -3,7 +3,6 @@
 Create beautiful, shareable images for your Luma events - like Spotify's share cards, but for events.
 
 ![Luma Share](https://img.shields.io/badge/status-live-brightgreen)
-[![GitHub](https://img.shields.io/github/stars/fabianhtml/luma-share?style=social)](https://github.com/fabianhtml/luma-share)
 
 **[Try it live → luma-share.pages.dev](https://luma-share.pages.dev/)**
 
