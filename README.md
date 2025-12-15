@@ -2,8 +2,10 @@
 
 Create beautiful, shareable images for your Luma events - like Spotify's share cards, but for events.
 
-![Luma Share](https://img.shields.io/badge/status-beta-orange)
+![Luma Share](https://img.shields.io/badge/status-live-brightgreen)
 [![GitHub](https://img.shields.io/github/stars/fabianhtml/luma-share?style=social)](https://github.com/fabianhtml/luma-share)
+
+**[Try it live → luma-share.pages.dev](https://luma-share.pages.dev/)**
 
 ## What is this?
 
@@ -14,6 +16,8 @@ Luma Share is a simple tool that generates Instagram-ready images from your Luma
 - **Automatic data extraction** - Fetches event title, date, time, and cover image from any Luma event
 - **Two formats** - Story (1080x1920) and Post (1080x1350) optimized for Instagram
 - **Multiple templates** - Use the event's cover image with blur effect, or choose from gradient backgrounds
+- **Language selector** - Choose between Auto (browser), Spanish, English, or Portuguese
+- **Mobile friendly** - Works on iOS and Android with native share support
 - **Instant download** - Get high-resolution PNG files ready to share
 
 ## Templates
@@ -80,8 +84,8 @@ PRs welcome! Some ideas:
 - [ ] More gradient templates
 - [ ] Custom color picker
 - [ ] QR code with event link
-- [ ] Copy to clipboard functionality
-- [ ] Support for other event platforms
+- [ ] More languages
+- [ ] Support for other event platforms (Eventbrite, Meetup, etc.)
 
 ## Author
 
