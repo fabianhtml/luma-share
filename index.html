@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Luma Share - Create shareable cards for your events</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Luma Share</h1>
+      <p>Create beautiful images to share your Luma events on social media</p>
+    </header>
+
+    <main>
+      <section class="input-section">
+        <div class="input-group">
+          <input
+            type="url"
+            id="luma-url"
+            placeholder="Paste your Luma event link (e.g. lu.ma/abc123)"
+          >
+          <button id="generate-btn">Generate</button>
+        </div>
+        <p class="hint">Works with lu.ma or luma.com links</p>
+      </section>
+
+      <section id="loading" class="loading hidden">
+        <div class="spinner"></div>
+        <p>Fetching event information...</p>
+      </section>
+
+      <section id="error" class="error hidden">
+        <p id="error-message"></p>
+      </section>
+
+      <section id="preview-section" class="preview-section hidden">
+        <h2>Preview</h2>
+
+        <div class="template-selector">
+          <span class="template-label">Template:</span>
+          <div class="template-options">
+            <button class="template-btn active" data-template="image" title="Event image">
+              <span class="template-icon">🖼️</span>
+              <span>Image</span>
+            </button>
+            <button class="template-btn" data-template="gradient-sunset" title="Sunset gradient">
+              <span class="template-preview" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);"></span>
+              <span>Sunset</span>
+            </button>
+            <button class="template-btn" data-template="gradient-ocean" title="Dark gradient">
+              <span class="template-preview" style="background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);"></span>
+              <span>Dark</span>
+            </button>
+            <button class="template-btn" data-template="gradient-fire" title="Fire gradient">
+              <span class="template-preview" style="background: linear-gradient(135deg, #f12711 0%, #f5af19 100%);"></span>
+              <span>Fire</span>
+            </button>
+            <button class="template-btn" data-template="gradient-mint" title="Mint gradient">
+              <span class="template-preview" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);"></span>
+              <span>Mint</span>
+            </button>
+            <button class="template-btn" data-template="gradient-purple" title="Purple gradient">
+              <span class="template-preview" style="background: linear-gradient(135deg, #4a00e0 0%, #8e2de2 100%);"></span>
+              <span>Purple</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="previews">
+          <div class="preview-container">
+            <h3>Story (9:16)</h3>
+            <div class="preview-wrapper story-wrapper">
+              <div id="story-card" class="card story-card">
+                <div id="story-background" class="card-background"></div>
+                <div class="card-overlay"></div>
+                <div class="card-content">
+                  <p class="card-date" id="story-date"></p>
+                  <h2 class="card-title" id="story-title"></h2>
+                  <p class="card-time" id="story-time"></p>
+                </div>
+                <div class="card-footer">
+                  <span class="luma-badge">lu.ma</span>
+                </div>
+              </div>
+            </div>
+            <button class="download-btn" data-format="story">Download Story</button>
+          </div>
+
+          <div class="preview-container">
+            <h3>Post (4:5)</h3>
+            <div class="preview-wrapper post-wrapper">
+              <div id="post-card" class="card post-card">
+                <div id="post-background" class="card-background"></div>
+                <div class="card-overlay"></div>
+                <div class="card-content">
+                  <p class="card-date" id="post-date"></p>
+                  <h2 class="card-title" id="post-title"></h2>
+                  <p class="card-time" id="post-time"></p>
+                </div>
+                <div class="card-footer">
+                  <span class="luma-badge">lu.ma</span>
+                </div>
+              </div>
+            </div>
+            <button class="download-btn" data-format="post">Download Post</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>Open source project - <a href="https://github.com" target="_blank">View on GitHub</a></p>
+    </footer>
+  </div>
+
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
