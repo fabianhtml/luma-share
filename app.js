@@ -471,155 +471,37 @@ async function drawBlurredImage(container, format, imageUrl) {
     drawY = 0; // top alignment
   }
 
-  // Draw image
-  ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+  // Check if ctx.filter is supported (not on iOS Safari)
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
-  // Apply blur using multiple passes (works on all browsers including iOS)
-  applyStackBlur(ctx, width, height, 20);
-}
-
-// StackBlur - a fast blur algorithm that works on all browsers
-function applyStackBlur(ctx, width, height, radius) {
-  const imageData = ctx.getImageData(0, 0, width, height);
-  const pixels = imageData.data;
-
-  const wm = width - 1;
-  const hm = height - 1;
-  const rad1 = radius + 1;
-  const divSum = (radius + rad1) * (radius + rad1);
-
-  const r = [];
-  const g = [];
-  const b = [];
-
-  const vmin = [];
-  const vmax = [];
-
-  let p, p1, p2, rsum, gsum, bsum, x, y, i, yp, yi, yw;
-
-  const stackStart = [];
-  for (i = 0; i < divSum; i++) {
-    stackStart[i] = { r: 0, g: 0, b: 0 };
+  if (!isIOS) {
+    // Use native blur filter on desktop/Android
+    ctx.filter = 'blur(22px)';
   }
 
-  let stackIn, stackOut, stackEnd;
-  let mul, shg;
+  // Draw image slightly larger to avoid edge artifacts
+  const scale = 1.1;
+  const scaledWidth = drawWidth * scale;
+  const scaledHeight = drawHeight * scale;
+  const offsetX = (scaledWidth - drawWidth) / 2;
+  const offsetY = (scaledHeight - drawHeight) / 2;
 
-  // Precalculate multiplication and shift
-  const mulTable = [512,512,456,512,328,456,335,512,405,328,271,456,388,335,292,512];
-  const shgTable = [9,11,12,13,13,14,14,15,15,15,15,16,16,16,16,17];
+  ctx.drawImage(
+    img,
+    drawX - offsetX,
+    drawY - offsetY,
+    scaledWidth,
+    scaledHeight
+  );
 
-  if (radius < 16) {
-    mul = mulTable[radius];
-    shg = shgTable[radius];
-  } else {
-    mul = Math.round(256 / divSum);
-    shg = 8;
+  // Reset filter
+  ctx.filter = 'none';
+
+  // On iOS, add extra dark overlay since we can't blur
+  if (isIOS) {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+    ctx.fillRect(0, 0, width, height);
   }
-
-  yw = yi = 0;
-
-  for (y = 0; y < height; y++) {
-    rsum = gsum = bsum = 0;
-
-    for (i = -radius; i <= radius; i++) {
-      p = (yi + Math.min(wm, Math.max(i, 0))) * 4;
-      const stackI = i + radius;
-      stackStart[stackI].r = pixels[p];
-      stackStart[stackI].g = pixels[p + 1];
-      stackStart[stackI].b = pixels[p + 2];
-      const rbs = rad1 - Math.abs(i);
-      rsum += pixels[p] * rbs;
-      gsum += pixels[p + 1] * rbs;
-      bsum += pixels[p + 2] * rbs;
-    }
-
-    stackIn = radius;
-    stackOut = 0;
-
-    for (x = 0; x < width; x++) {
-      r[yi] = (rsum * mul) >> shg;
-      g[yi] = (gsum * mul) >> shg;
-      b[yi] = (bsum * mul) >> shg;
-
-      rsum -= stackStart[stackOut].r * rad1;
-      gsum -= stackStart[stackOut].g * rad1;
-      bsum -= stackStart[stackOut].b * rad1;
-
-      p = (x + radius + 1);
-      p = (yi + (p < wm ? p : wm)) * 4;
-
-      stackStart[stackOut].r = pixels[p];
-      stackStart[stackOut].g = pixels[p + 1];
-      stackStart[stackOut].b = pixels[p + 2];
-
-      rsum += stackStart[stackOut].r * rad1;
-      gsum += stackStart[stackOut].g * rad1;
-      bsum += stackStart[stackOut].b * rad1;
-
-      stackIn++;
-      if (stackIn >= divSum) stackIn = 0;
-      stackOut++;
-      if (stackOut >= divSum) stackOut = 0;
-
-      yi++;
-    }
-    yw += width;
-  }
-
-  for (x = 0; x < width; x++) {
-    rsum = gsum = bsum = 0;
-    yp = -radius * width;
-
-    for (i = -radius; i <= radius; i++) {
-      yi = Math.max(0, yp) + x;
-      const stackI = i + radius;
-      stackStart[stackI].r = r[yi];
-      stackStart[stackI].g = g[yi];
-      stackStart[stackI].b = b[yi];
-      const rbs = rad1 - Math.abs(i);
-      rsum += r[yi] * rbs;
-      gsum += g[yi] * rbs;
-      bsum += b[yi] * rbs;
-
-      if (i < hm) yp += width;
-    }
-
-    yi = x;
-    stackIn = radius;
-    stackOut = 0;
-
-    for (y = 0; y < height; y++) {
-      p = yi * 4;
-      pixels[p] = (rsum * mul) >> shg;
-      pixels[p + 1] = (gsum * mul) >> shg;
-      pixels[p + 2] = (bsum * mul) >> shg;
-
-      rsum -= stackStart[stackOut].r * rad1;
-      gsum -= stackStart[stackOut].g * rad1;
-      bsum -= stackStart[stackOut].b * rad1;
-
-      yp = y + rad1;
-      yp = (yp < hm ? yp : hm) * width + x;
-
-      stackStart[stackOut].r = r[yp];
-      stackStart[stackOut].g = g[yp];
-      stackStart[stackOut].b = b[yp];
-
-      rsum += stackStart[stackOut].r * rad1;
-      gsum += stackStart[stackOut].g * rad1;
-      bsum += stackStart[stackOut].b * rad1;
-
-      stackIn++;
-      if (stackIn >= divSum) stackIn = 0;
-      stackOut++;
-      if (stackOut >= divSum) stackOut = 0;
-
-      yi += width;
-    }
-  }
-
-  ctx.putImageData(imageData, 0, 0);
 }
 
 function createExportCard(format, eventData) {
