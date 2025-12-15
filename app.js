@@ -18,6 +18,7 @@ const TEMPLATES = {
 };
 
 let currentTemplate = 'image';
+let currentLanguage = 'auto'; // 'auto', 'es', 'en', 'pt'
 
 // DOM Elements
 const lumaUrlInput = document.getElementById('luma-url');
@@ -44,6 +45,19 @@ document.querySelectorAll('.template-btn').forEach(btn => {
     btn.classList.add('active');
     currentTemplate = btn.dataset.template;
     applyTemplate();
+  });
+});
+
+// Language selector
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentLanguage = btn.dataset.lang;
+    // Re-render with new language
+    if (window.currentEventData) {
+      updateCardsText(window.currentEventData);
+    }
   });
 });
 
@@ -242,12 +256,28 @@ function parseEventData(html, eventId) {
 
   // Format the data
   return {
-    title: eventData.title || 'Evento',
+    title: eventData.title || 'Event',
     date: formatDate(eventData.startDate),
     time: formatTime(eventData.startDate, eventData.endDate),
     image: eventData.image || '',
-    eventId: eventId
+    eventId: eventId,
+    // Keep raw dates for re-formatting
+    startDate: eventData.startDate,
+    endDate: eventData.endDate
   };
+}
+
+function getLocale() {
+  if (currentLanguage === 'auto') {
+    return navigator.language || 'en-US';
+  }
+  // Map short codes to full locale
+  const localeMap = {
+    'es': 'es-ES',
+    'en': 'en-US',
+    'pt': 'pt-BR'
+  };
+  return localeMap[currentLanguage] || currentLanguage;
 }
 
 function formatDate(dateString) {
@@ -255,8 +285,7 @@ function formatDate(dateString) {
 
   try {
     const date = new Date(dateString);
-    // Use browser's language for localization
-    const locale = navigator.language || 'en-US';
+    const locale = getLocale();
     return date.toLocaleDateString(locale, {
       weekday: 'long',
       day: 'numeric',
@@ -273,8 +302,7 @@ function formatTime(startDate, endDate) {
 
   try {
     const start = new Date(startDate);
-    // Use browser's language for localization
-    const locale = navigator.language || 'en-US';
+    const locale = getLocale();
     const timeOptions = { hour: '2-digit', minute: '2-digit' };
 
     let timeStr = start.toLocaleTimeString(locale, timeOptions);
@@ -288,6 +316,20 @@ function formatTime(startDate, endDate) {
   } catch {
     return '';
   }
+}
+
+function updateCardsText(eventData) {
+  const date = formatDate(eventData.startDate);
+  const time = formatTime(eventData.startDate, eventData.endDate);
+
+  document.getElementById('story-date').textContent = date;
+  document.getElementById('story-time').textContent = time;
+  document.getElementById('post-date').textContent = date;
+  document.getElementById('post-time').textContent = time;
+
+  // Update stored data
+  window.currentEventData.date = date;
+  window.currentEventData.time = time;
 }
 
 function updateCards(eventData) {

@@ -173,6 +173,27 @@ header p {
   justify-content: center;
 }
 
+.lang-btn {
+  padding: 0.5rem 1rem;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.lang-btn:hover {
+  border-color: var(--text-secondary);
+}
+
+.lang-btn.active {
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+
 .template-btn {
   display: flex;
   flex-direction: column;
