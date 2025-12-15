@@ -380,11 +380,35 @@ async function handleDownload(format) {
       logging: false
     });
 
-    // Download
+    // Convert to blob for sharing/downloading
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+    const fileName = `luma-${format}-${eventData.eventId}.png`;
+
+    // On mobile, try Web Share API first (allows saving to Photos on iOS)
+    if (navigator.share && navigator.canShare) {
+      const file = new File([blob], fileName, { type: 'image/png' });
+      const shareData = { files: [file] };
+
+      if (navigator.canShare(shareData)) {
+        try {
+          await navigator.share(shareData);
+          document.body.removeChild(exportCard);
+          btn.textContent = originalText;
+          btn.disabled = false;
+          return;
+        } catch (e) {
+          // User cancelled or share failed, fall back to download
+          console.log('Share cancelled, falling back to download');
+        }
+      }
+    }
+
+    // Fallback: regular download
     const link = document.createElement('a');
-    link.download = `luma-${format}-${eventData.eventId}.png`;
-    link.href = canvas.toDataURL('image/png');
+    link.download = fileName;
+    link.href = URL.createObjectURL(blob);
     link.click();
+    URL.revokeObjectURL(link.href);
 
     // Cleanup
     document.body.removeChild(exportCard);
