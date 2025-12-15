@@ -3,6 +3,7 @@
 Create beautiful, shareable images for your Luma events - like Spotify's share cards, but for events.
 
 ![Luma Share](https://img.shields.io/badge/status-beta-orange)
+[![GitHub](https://img.shields.io/github/stars/fabianhtml/luma-share?style=social)](https://github.com/fabianhtml/luma-share)
 
 ## What is this?
 
@@ -45,7 +46,7 @@ Luma Share is a simple tool that generates Instagram-ready images from your Luma
 
 ```bash
 # Clone the repo
-git clone https://github.com/yourusername/luma-share.git
+git clone https://github.com/fabianhtml/luma-share.git
 cd luma-share
 
 # Start a local server (Python)
@@ -81,6 +82,10 @@ PRs welcome! Some ideas:
 - [ ] QR code with event link
 - [ ] Copy to clipboard functionality
 - [ ] Support for other event platforms
+
+## Author
+
+Created by [@fabianhtml](https://github.com/fabianhtml)
 
 ## License
 
